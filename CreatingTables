@@ -1,0 +1,78 @@
+Sub HeaderFooter()
+
+    Dim str As Integer
+    
+    str = InputBox("Podaj numer dla pierwszej strony")
+ 
+    With ActiveDocument.Sections(1).Headers(wdHeaderFooterPrimary)
+        .Range.Text = "Sprawozdania z badań 2022 r"
+        .Range.Paragraphs.Alignment = wdAlignParagraphCenter
+        .Range.Font.Size = 14
+    End With
+    
+    With ActiveDocument.Sections(1) _
+        .Footers(wdHeaderFooterPrimary).PageNumbers
+        .NumberStyle = wdPageNumberStyleArabic
+        .Add PageNumberAlignment:=wdAlignPageNumberRight, _
+        FirstPage:=True
+        .HeadingLevelForChapter = 0
+        .IncludeChapterNumber = False
+        .ChapterPageSeparator = wdSeparatorHyphen
+        .RestartNumberingAtSection = True
+        .StartingNumber = str
+    End With
+
+    ActiveDocument.PageSetup.TopMargin = InchesToPoints(1.5)
+
+End Sub
+
+Sub TabPomiarowe()
+
+    Dim NewTab As Table
+    Dim rng As Range
+    Dim i As Integer
+    Dim n As Integer
+    Dim r As Integer
+    Dim nn As Long
+    
+    nn = InputBox("Podaj numer dla pierwszego rzędu")
+    
+    Application.ScreenUpdating = False
+    
+    For i = 1 To 50
+        Set NewTab = ActiveDocument.Tables.Add(Range:=Selection.Range, NumRows:=21, NumColumns:= _
+            7, DefaultTableBehavior:=wdWord9TableBehavior, AutoFitBehavior:= _
+            wdAutoFitWindow)
+            
+        NewTab.Rows.Height = 28.62
+            
+        With NewTab
+            .Cell(Row:=1, Column:=1).Range.InsertAfter Text:="Nr spraw."
+            .Cell(Row:=1, Column:=2).Range.InsertAfter Text:="ID"
+            .Cell(Row:=1, Column:=3).Range.InsertAfter Text:="Rodzaj"
+            .Cell(Row:=1, Column:=4).Range.InsertAfter Text:="Ilość"
+            .Cell(Row:=1, Column:=5).Range.InsertAfter Text:="Okres pomiarowy"
+            .Cell(Row:=1, Column:=6).Range.InsertAfter Text:="Data wystawienia"
+            .Cell(Row:=1, Column:=7).Range.InsertAfter Text:="Podpis"
+        End With
+        
+        With NewTab.Range
+            .ParagraphFormat.Alignment = wdAlignParagraphCenter
+            .Cells.VerticalAlignment = wdCellAlignVerticalCenter
+            .Font.Size = 12
+        End With
+        
+        Selection.SplitTable
+    Next i
+    
+    
+    For n = 1 To 50
+        For r = 1 To 20
+            ActiveDocument.Tables(n).Cell(Row:=r + 1, Column:=1).Range.InsertAfter Text:=nn
+            nn = nn + 1
+        Next r
+    Next n
+        
+    Application.ScreenUpdating = True
+
+End Sub
